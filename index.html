@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shooting Star - Descubra o céu noturno</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #0B0C2A;
+            color: #FFFFFF;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Animated Starfield Background */
+        .starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .star {
+            position: absolute;
+            background: #FFFFFF;
+            border-radius: 50%;
+            animation: twinkle 3s ease-in-out infinite alternate;
+        }
+
+        .star.small { width: 1px; height: 1px; }
+        .star.medium { width: 2px; height: 2px; }
+        .star.large { width: 3px; height: 3px; }
+
+        @keyframes twinkle {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        .shooting-star {
+            position: absolute;
+            width: 2px;
+            height: 2px;
+            background: linear-gradient(45deg, #FFFFFF, #61dafb);
+            border-radius: 50%;
+            box-shadow: 0 0 6px #61dafb;
+            animation: shoot 4s linear infinite;
+        }
+
+        .shooting-star::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 1px;
+            width: 50px;
+            background: linear-gradient(90deg, transparent, #61dafb);
+            transform: translateX(50px) rotate(45deg);
+            border-radius: 1px;
+        }
+
+        @keyframes shoot {
+            0% {
+                transform: translateX(-100px) translateY(-100px);
+                opacity: 0;
+            }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% {
+                transform: translateX(100vw) translateY(100vh);
+                opacity: 0;
+            }
+        }
+
+        /* Header */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: transparent;
+            backdrop-filter: blur(0px);
+            z-index: 1000;
+            padding: 1rem 2rem;
+            transition: all 0.3s ease;
+        }
+
+        header.scrolled {
+            background: rgba(11, 12, 42, 0.95);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(97, 218, 251, 0.1);
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #61dafb;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            margin-right: 0.7rem;
+            font-size: 1.8rem;
+            animation: shooting-glow 2s ease-in-out infinite;
+        }
+
+        @keyframes shooting-glow {
+            0%, 100% { filter: drop-shadow(0 0 5px #61dafb); }
+            50% { filter: drop-shadow(0 0 15px #61dafb); }
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2.5rem;
+        }
+
+        nav a {
+            color: #FFFFFF;
+            text-decoration: none;
+            font-weight: 400;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: -5px;
+            left: 50%;
+            background: linear-gradient(90deg, #61dafb, #9B59B6);
+            transition: all 0.3s ease;
+            transform: translateX(-50%);
+        }
+
+        nav a:hover, nav a.active {
+            color: #61dafb;
+        }
+
+        nav a:hover::after, nav a.active::after {
+            width: 100%;
+        }
+
+        .search-btn {
+            background: linear-gradient(135deg, #61dafb, #9B59B6);
+            border: none;
+            color: #FFFFFF;
+            padding: 0.8rem 1.5rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(97, 218, 251, 0.2);
+        }
+
+        .search-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(97, 218, 251, 0.4);
+            filter: brightness(1.1);
+        }
+
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: #FFFFFF;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        main {
+            margin-top: 0;
+        }
+
+        .section {
+            display: none;
+            min-height: 100vh;
+            padding: 2rem;
+            animation: fadeIn 0.8s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Home Section */
+        .hero {
+            text-align: center;
+            padding: 8rem 0 4rem 0;
+            position: relative;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(135deg, #61dafb, #9B59B6, #FFFFFF);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: textGlow 3s ease-in-out infinite alternate;
+        }
+
+        @keyframes textGlow {
+            0% { filter: drop-shadow(0 0 10px rgba(97, 218, 251, 0.3)); }
+            100% { filter: drop-shadow(0 0 20px rgba(155, 89, 182, 0.5)); }
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+            font-weight: 300;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-button {
+            background: linear-gradient(135deg, #61dafb, #9B59B6);
+            border: none;
+            padding: 1.2rem 3rem;
+            border-radius: 50px;
+            color: #FFFFFF;
+            font-size: 1.1rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.4s ease;
+            box-shadow: 0 8px 25px rgba(97, 218, 251, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(97, 218, 251, 0.5);
+            filter: brightness(1.2);
+        }
+
+        .highlight-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-top: 6rem;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(97, 218, 251, 0.2);
+            border-radius: 20px;
+            padding: 2.5rem;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, #61dafb, #9B59B6);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .card:hover::before {
+            transform: translateX(0);
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(97, 218, 251, 0.2);
+            border-color: rgba(97, 218, 251, 0.4);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .card h3 {
+            color: #61dafb;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .card .event-date {
+            color: #9B59B6;
+            font-weight: 500;
+            margin-bottom: 0.8rem;
+        }
+
+        .card .intensity {
+            background: linear-gradient(135deg, #61dafb, #9B59B6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .meteor-name {
+            color: #61dafb;
+            font-size: 1.2rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+
+        /* Sky Map */
+        .sky-map-container {
+            position: relative;
+            height: 80vh;
+            background: radial-gradient(ellipse at center, #1a1a3e 0%, #0B0C2A 100%);
+            border-radius: 25px;
+            overflow: hidden;
+            margin: 2rem 0;
+            border: 2px solid rgba(97, 218, 251, 0.3);
+            cursor: grab;
+        }
+
+        .sky-map-container:active {
+            cursor: grabbing;
+        }
+
+        .map-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+            display: flex;
+            gap: 10px;
+        }
+
+        .control-btn {
+            background: rgba(97, 218, 251, 0.2);
+            border: 1px solid rgba(97, 218, 251, 0.5);
+            color: #61dafb;
+            padding: 0.8rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .control-btn:hover {
+            background: rgba(97, 218, 251, 0.3);
+            transform: scale(1.1);
+        }
+
+        /* Botões de zoom seguem o mesmo estilo dos botões de controle */
+        .zoom-btn {
+            background: rgba(97, 218, 251, 0.2);
+            border: 1px solid rgba(97, 218, 251, 0.5);
+            color: #61dafb;
+            padding: 0.8rem;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            font-size: 1.3rem;
+            font-weight: bold;
+        }
+
+        .zoom-btn:hover {
+            background: rgba(97, 218, 251, 0.3);
+            transform: scale(1.1);
+        }
+
+        .constellation {
+            position: absolute;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .constellation:hover {
+            filter: drop-shadow(0 0 10px #61dafb);
+            transform: none;
+        }
+
+        .star-point {
+            cursor: pointer;
+            transition: all 0.3s ease;
+            transform-origin: center;
+        }
+
+        .star-point:hover {
+            filter: drop-shadow(0 0 10px #61dafb);
+            transform: none;
+        }
+
+        /* Constellation lines thicker for larger map */
+        .constellation-line {
+            stroke: rgba(97, 218, 251, 0.6);
+            stroke-width: 3.5;
+        }
+
+        .tooltip {
+            position: absolute;
+            background: rgba(11, 12, 42, 0.95);
+            border: 1px solid #61dafb;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            max-width: 280px;
+            z-index: 100;
+            display: none;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .tooltip h4 {
+            color: #61dafb;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+        /* Timeline for Meteor Showers */
+        .timeline-container {
+            margin: 3rem 0;
+            position: relative;
+        }
+
+        .timeline {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .meteor-event {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(97, 218, 251, 0.2);
+            border-radius: 16px;
+            padding: 2rem;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .meteor-event::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #9B59B6, transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .meteor-event:hover::before {
+            transform: translateX(100%);
+        }
+
+        .meteor-event:hover {
+            background: rgba(155, 89, 182, 0.1);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(155, 89, 182, 0.3);
+            border-color: rgba(155, 89, 182, 0.5);
+        }
+
+        .meteor-date {
+            color: #9B59B6;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        .meteor-intensity {
+            background: linear-gradient(135deg, #61dafb, #9B59B6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .alert-btn {
+            background: linear-gradient(135deg, #61dafb, #9B59B6);
+            border: none;
+            color: #FFFFFF;
+            padding: 0.8rem 1.5rem;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .alert-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(97, 218, 251, 0.4);
+        }
+
+        /* Phenomena */
+        .phenomena-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 2rem;
+            margin: 3rem 0;
+        }
+
+        .phenomenon-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(97, 218, 251, 0.2);
+        }
+
+        .phenomenon-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(97, 218, 251, 0.2);
+            border-color: rgba(97, 218, 251, 0.5);
+        }
+
+        .phenomenon-image {
+            height: 200px;
+            background: linear-gradient(135deg, #61dafb, #9B59B6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .phenomenon-image::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(11, 12, 42, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .phenomenon-card:hover .phenomenon-image::after {
+            background: transparent;
+        }
+
+        .phenomenon-content {
+            padding: 2rem;
+        }
+
+        .phenomenon-content h3 {
+            color: #61dafb;
+            margin-bottom: 0.8rem;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .phenomenon-date {
+            color: #9B59B6;
+            font-weight: 500;
+            margin-bottom: 1rem;
+        }
+
+        /* About Section */
+        .about-content {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+            padding: 4rem 0;
+        }
+
+        .about-content h2 {
+            font-size: 2.5rem;
+            margin-bottom: 2rem;
+            background: linear-gradient(135deg, #61dafb, #9B59B6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .about-text {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+        }
+
+        .credits {
+            color: #9B59B6;
+            font-weight: 500;
+            margin-top: 2rem;
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(11, 12, 42, 0.95);
+            padding: 3rem 2rem 2rem 2rem;
+            text-align: center;
+            border-top: 1px solid rgba(97, 218, 251, 0.2);
+            position: relative;
+            backdrop-filter: blur(20px);
+        }
+
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-links a {
+            color: #FFFFFF;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            font-weight: 400;
+        }
+
+        .footer-links a:hover {
+            color: #61dafb;
+            transform: translateY(-2px);
+        }
+
+        .social-links {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .social-links a {
+            color: #FFFFFF;
+            font-size: 1.5rem;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .social-links a:hover {
+            color: #61dafb;
+            transform: scale(1.2);
+        }
+
+        /* Notifications */
+        .notification {
+            position: fixed;
+            top: 100px;
+            right: 20px;
+            background: linear-gradient(135deg, #61dafb, #9B59B6);
+            color: #FFFFFF;
+            padding: 1.5rem 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            z-index: 10000;
+            animation: slideInRight 0.5s ease;
+            max-width: 350px;
+        }
+
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        /* Section Headers */
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            padding-top: 6rem;
+        }
+
+        .section-header h2 {
+            font-size: 2.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #61dafb, #9B59B6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .section-header p {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            nav ul {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: rgba(11, 12, 42, 0.98);
+                padding: 2rem;
+                backdrop-filter: blur(20px);
+                border-top: 1px solid rgba(97, 218, 251, 0.2);
+            }
+
+            nav ul.mobile-open {
+                display: flex;
+            }
+
+            .mobile-menu-btn {
+                display: block;
+            }
+
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .highlight-cards {
+                grid-template-columns: 1fr;
+            }
+
+            .sky-map-container {
+                height: 60vh;
+            }
+
+            header {
+                padding: 1rem;
+            }
+
+            .search-btn {
+                display: none;
+            }
+        }
+
+        /* Planetas maiores no mapa interativo */
+        #planets .star-point {
+            r: 12 !important;
+        }
+
+        /* Remove o efeito de scale das constelações no hover */
+        .constellation:hover {
+            filter: drop-shadow(0 0 10px #61dafb);
+            transform: none;
+        }
+
+        /* CSS: increase clickable area for planets */
+        .planet-point {
+            pointer-events: all;
+        }
+    </style>
+</head>
+<body>
+    <!-- Starfield Background -->
+    <div class="starfield" id="starfield"></div>
+
+    <!-- Header -->
+    <header id="header">
+        <div class="nav-container">
+            <a href="#" class="logo" onclick="showSection('home')">
+                <span class="logo-icon">✨</span>
+                Shooting Star
+            </a>
+            <nav>
+                <ul id="navMenu">
+                    <li><a href="#" class="nav-link active" data-section="home">Home</a></li>
+                    <li><a href="#" class="nav-link" data-section="sky-map">Mapa do Céu</a></li>
+                    <li><a href="#" class="nav-link" data-section="meteors">Chuvas de Meteoros</a></li>
+                    <li><a href="#" class="nav-link" data-section="phenomena">Fenômenos Astronômicos</a></li>
+                    <li><a href="#" class="nav-link" data-section="about">Sobre</a></li>
+                </ul>
+            </nav>
+            <button class="mobile-menu-btn" onclick="toggleMobileMenu()">☰</button>
+            <button class="search-btn" onclick="openSearch()">🔍 Buscar</button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+        <!-- Home Section -->
+        <section id="home" class="section active">
+            <div class="container">
+                <div class="hero">
+                    <h1>Explore o universo e descubra os segredos do céu noturno</h1>
+                    <p>Uma experiência interativa e científica que traz as maravilhas do cosmos para o seu navegador.</p>
+                    <button class="cta-button" onclick="showSection('sky-map')">Comece a explorar</button>
+                </div>
+
+                <div class="highlight-cards">
+                    <div class="card">
+                        <h3>🌠 Próxima Chuva de Meteoros</h3>
+                        <div class="event-date">11 a 13 de agosto</div>
+                        <div class="meteor-name">Perseidas</div>
+                        <div class="intensity">Intensidade: Alta - até 100 meteoros/hora</div>
+                        <p>As Perseidas são conhecidas por produzir meteoros brilhantes e coloridos, sendo uma das chuvas mais espetaculares do ano.</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>⭐ Constelação do Dia</h3>
+                        <div class="meteor-name">Órion</div>
+                        <p>Órion, o caçador, é visível principalmente no inverno do hemisfério norte. Facilmente reconhecível pelas três estrelas do cinturão.</p>
+                    </div>
+                    
+                    <div class="card">
+                        <h3>🌙 Fenômeno Astronômico em Destaque</h3>
+                        <div class="event-date">14 de julho</div>
+                        <div class="meteor-name">Superlua</div>
+                        <p>Quando a lua cheia coincide com o perigeu, parece maior e mais brilhante no céu, oferecendo um espetáculo visual único.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sky Map Section -->
+        <section id="sky-map" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Mapa do Céu Interativo</h2>
+                    <p>Explore constelações, estrelas e planetas em tempo real. Clique para descobrir informações científicas.</p>
+                </div>
+                
+                <div class="sky-map-container" id="skyMap">
+                    <div class="map-controls">
+                        <button class="control-btn active" onclick="toggleFilter('constellations')" title="Constelações">⭐</button>
+                        <button class="control-btn" onclick="toggleFilter('planets')" title="Planetas">🪐</button>
+                        <button class="control-btn" onclick="resetView()" title="Resetar">🔄</button>
+                        <button class="zoom-btn" onclick="zoomIn()" title="Aumentar Zoom">＋</button>
+                        <button class="zoom-btn" onclick="zoomOut()" title="Diminuir Zoom">－</button>
+                    </div>
+
+                    <svg width="100%" height="100%" id="constellationSvg" viewBox="0 0 1000 600">
+                        <!-- Orion Constellation (stars after lines) -->
+                        <g class="constellation" data-name="Órion" data-distance="500-2000 anos-luz" data-info="Constelação do Caçador. Contém as estrelas Betelgeuse e Rigel.">
+                            <line x1="520" y1="195" x2="546" y2="260" class="constellation-line"/>
+                            <line x1="546" y1="260" x2="572" y2="325" class="constellation-line"/>
+                            <line x1="572" y1="325" x2="598" y2="325" class="constellation-line"/>
+                            <line x1="598" y1="325" x2="624" y2="325" class="constellation-line"/>
+                            <line x1="572" y1="325" x2="546" y2="416" class="constellation-line"/>
+                            <line x1="624" y1="325" x2="624" y2="390" class="constellation-line"/>
+                            <circle cx="520" cy="195" r="8" fill="#ff6b6b" class="star-point" data-name="Betelgeuse" data-info="Supergigante vermelha, uma das maiores estrelas conhecidas"/>
+                            <circle cx="546" cy="260" r="6" fill="white" class="star-point" data-name="Bellatrix" data-info="Estrela brilhante na constelação de Órion"/>
+                            <circle cx="572" cy="325" r="6" fill="white" class="star-point" data-name="Alnitak" data-info="Estrela do cinturão de Órion"/>
+                            <circle cx="598" cy="325" r="6" fill="white" class="star-point" data-name="Alnilam" data-info="Estrela do cinturão de Órion"/>
+                            <circle cx="624" cy="325" r="6" fill="white" class="star-point" data-name="Mintaka" data-info="Estrela do cinturão de Órion"/>
+                            <circle cx="546" cy="416" r="8" fill="#61dafb" class="star-point" data-name="Rigel" data-info="Supergigante azul, uma das estrelas mais brilhantes"/>
+                            <circle cx="624" cy="390" r="6" fill="white" class="star-point" data-name="Saiph" data-info="Estrela brilhante na constelação de Órion"/>
+                        </g>
+                        
+                        <!-- Ursa Major (stars after lines) -->
+                        <g class="constellation" data-name="Ursa Major" data-distance="79-124 anos-luz" data-info="A Grande Ursa, conhecida como Carro ou Arado">
+                            <line x1="195" y1="130" x2="260" y2="143" class="constellation-line"/>
+                            <line x1="260" y1="143" x2="325" y2="156" class="constellation-line"/>
+                            <line x1="325" y1="156" x2="390" y2="149" class="constellation-line"/>
+                            <line x1="390" y1="149" x2="455" y2="137" class="constellation-line"/>
+                            <line x1="455" y1="137" x2="520" y2="130" class="constellation-line"/>
+                            <line x1="520" y1="130" x2="585" y2="124" class="constellation-line"/>
+                            <circle cx="195" cy="130" r="6" fill="white" class="star-point" data-name="Dubhe" data-info="Estrela brilhante na Ursa Major"/>
+                            <circle cx="260" cy="143" r="6" fill="white" class="star-point" data-name="Merak" data-info="Estrela brilhante na Ursa Major"/>
+                            <circle cx="325" cy="156" r="6" fill="white" class="star-point" data-name="Phecda" data-info="Estrela brilhante na Ursa Major"/>
+                            <circle cx="390" cy="149" r="6" fill="white" class="star-point" data-name="Megrez" data-info="Estrela brilhante na Ursa Major"/>
+                            <circle cx="455" cy="137" r="6" fill="white" class="star-point" data-name="Alioth" data-info="Estrela brilhante na Ursa Major"/>
+                            <circle cx="520" cy="130" r="6" fill="white" class="star-point" data-name="Mizar" data-info="Estrela brilhante na Ursa Major"/>
+                            <circle cx="585" cy="124" r="6" fill="white" class="star-point" data-name="Alkaid" data-info="Estrela brilhante na Ursa Major"/>
+                        </g>
+
+                        <!-- Cassiopeia (stars after lines) -->
+                        <g class="constellation" data-name="Cassiopéia" data-distance="54-550 anos-luz" data-info="Constelação em forma de W, rainha da mitologia">
+                            <line x1="910" y1="195" x2="975" y2="169" class="constellation-line"/>
+                            <line x1="975" y1="169" x2="1040" y2="208" class="constellation-line"/>
+                            <line x1="1040" y1="208" x2="1105" y2="182" class="constellation-line"/>
+                            <line x1="1105" y1="182" x2="1170" y2="221" class="constellation-line"/>
+                            <circle cx="910" cy="195" r="6" fill="white" class="star-point" data-name="Schedar" data-info="Estrela brilhante em Cassiopeia"/>
+                            <circle cx="975" cy="169" r="6" fill="white" class="star-point" data-name="Caph" data-info="Estrela brilhante em Cassiopeia"/>
+                            <circle cx="1040" cy="208" r="6" fill="white" class="star-point" data-name="Gamma Cas" data-info="Estrela brilhante em Cassiopeia"/>
+                            <circle cx="1105" cy="182" r="6" fill="white" class="star-point" data-name="Ruchbah" data-info="Estrela brilhante em Cassiopeia"/>
+                            <circle cx="1170" cy="221" r="6" fill="white" class="star-point" data-name="Segin" data-info="Estrela brilhante em Cassiopeia"/>
+                        </g>
+
+                        <!-- Planets -->
+                        <g id="planets" style="display: none;">
+                            <circle cx="600" cy="300" r="16" fill="#FFA500" class="star-point planet-point" data-name="Júpiter" data-info="O maior planeta do sistema solar"/>
+                            <circle cx="750" cy="400" r="12" fill="#FFD700" class="star-point planet-point" data-name="Saturno" data-info="Conhecido pelos seus anéis"/>
+                            <circle cx="200" cy="450" r="10" fill="#FF4500" class="star-point planet-point" data-name="Marte" data-info="O planeta vermelho"/>
+                            <circle cx="850" cy="300" r="8" fill="#87CEEB" class="star-point planet-point" data-name="Vênus" data-info="O planeta mais brilhante"/>
+                        </g>
+                    </svg>
+
+                    <div class="tooltip" id="tooltip">
+                        <h4 id="tooltip-title"></h4>
+                        <p id="tooltip-content"></p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Meteors Section -->
+        <section id="meteors" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Chuvas de Meteoros</h2>
+                    <p>Acompanhe os eventos mais espetaculares do céu noturno ao longo do ano.</p>
+                </div>
+                
+                <div class="timeline-container">
+                    <div class="timeline">
+                        <div class="meteor-event">
+                            <div class="meteor-name">Quadrântidas</div>
+                            <div class="meteor-date">28 de dezembro - 12 de janeiro</div>
+                            <div class="meteor-intensity">Intensidade: Moderada - até 25 meteoros/hora</div>
+                            <p>Uma das três grandes chuvas de meteoros anuais. Melhor visualização no hemisfério norte durante as primeiras horas da manhã.</p>
+                            <button class="alert-btn" onclick="setAlert('Quadrântidas')">🔔 Receber Alerta</button>
+                        </div>
+                        
+                        <div class="meteor-event">
+                            <div class="meteor-name">Liríadas</div>
+                            <div class="meteor-date">22 - 23 de abril</div>
+                            <div class="meteor-intensity">Intensidade: Baixa - até 18 meteoros/hora</div>
+                            <p>Originada do cometa C/1861 G1 Thatcher. Conhecida por ocasionalmente produzir explosões de meteoros brilhantes.</p>
+                            <button class="alert-btn" onclick="setAlert('Liríadas')">🔔 Receber Alerta</button>
+                        </div>
+                        
+                        <div class="meteor-event">
+                            <div class="meteor-name">Perseidas</div>
+                            <div class="meteor-date">11 - 13 de agosto</div>
+                            <div class="meteor-intensity">Intensidade: Alta - até 100 meteoros/hora</div>
+                            <p>Uma das chuvas mais populares e confiáveis. Originada do cometa Swift-Tuttle, produz meteoros rápidos e brilhantes.</p>
+                            <button class="alert-btn" onclick="setAlert('Perseidas')">🔔 Receber Alerta</button>
+                        </div>
+                        
+                        <div class="meteor-event">
+                            <div class="meteor-name">Geminídeas</div>
+                            <div class="meteor-date">13 - 14 de dezembro</div>
+                            <div class="meteor-intensity">Intensidade: Muito Alta - até 120 meteoros/hora</div>
+                            <p>Considerada a melhor chuva de meteoros do ano. Originada do asteroide 3200 Phaethon, produz meteoros lentos e coloridos.</p>
+                            <button class="alert-btn" onclick="setAlert('Geminídeas')">🔔 Receber Alerta</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Phenomena Section -->
+        <section id="phenomena" class="section">
+            <div class="container">
+                <div class="section-header">
+                    <h2>Fenômenos Astronômicos</h2>
+                    <p>Descubra os eventos celestiais mais impressionantes e suas características únicas.</p>
+                </div>
+                
+                <div class="phenomena-grid">
+                    <div class="phenomenon-card">
+                        <div class="phenomenon-image">🌘</div>
+                        <div class="phenomenon-content">
+                            <h3>Eclipse Solar Parcial</h3>
+                            <div class="phenomenon-date">10 de outubro</div>
+                            <p>A lua cobre parcialmente o sol, criando um efeito de meia-lua brilhante. Visível em partes da América do Norte e Europa.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="phenomenon-card">
+                        <div class="phenomenon-image">☄️</div>
+                        <div class="phenomenon-content">
+                            <h3>Cometa Halley</h3>
+                            <div class="phenomenon-date">Próxima passagem: 2061</div>
+                            <p>Um dos cometas mais famosos, visível a cada 76 anos. Sua próxima aproximação será um evento astronômico histórico.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="phenomenon-card">
+                        <div class="phenomenon-image">🌌</div>
+                        <div class="phenomenon-content">
+                            <h3>Aurora Boreal</h3>
+                            <div class="phenomenon-date">Fenômeno contínuo</div>
+                            <p>Cores verdes, vermelhas e roxas iluminam o céu devido à interação de partículas solares com a atmosfera terrestre.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="phenomenon-card">
+                        <div class="phenomenon-image">🌕</div>
+                        <div class="phenomenon-content">
+                            <h3>Superlua</h3>
+                            <div class="phenomenon-date">14 de julho</div>
+                            <p>A lua cheia parece maior e mais brilhante devido à proximidade com a Terra durante o perigeu lunar.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="section">
+            <div class="container">
+                <div class="about-content">
+                    <h2>Sobre o Shooting Star</h2>
+                    <div class="about-text">
+                        <p>Shooting Star é um projeto educativo que traz o céu noturno para o seu navegador. Descubra estrelas, constelações, chuvas de meteoros e fenômenos astronômicos de forma interativa e científica.</p>
+                        
+                        <p>Nossa missão é tornar a astronomia acessível a todos, combinando ciência rigorosa com uma experiência visual envolvente. Explore o cosmos, aprenda sobre os mistérios do universo e desenvolva uma conexão mais profunda com o céu noturno.</p>
+                        
+                        <p>Cada informação apresentada é baseada em dados astronômicos atualizados e pesquisas científicas confiáveis, garantindo que sua jornada de descoberta seja tanto educativa quanto inspiradora.</p>
+                    </div>
+                    
+                    <div class="credits">
+                        Desenvolvido com paixão pela astronomia e tecnologia
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-links">
+            <a href="#" onclick="showSection('home')">Home</a>
+            <a href="#" onclick="showSection('about')">Sobre</a>
+            <a href="#">Contato</a>
+            <a href="#">Política de Privacidade</a>
+        </div>
+        
+        <div class="social-links">
+            <a href="#" title="Twitter">🐦</a>
+            <a href="#" title="Instagram">📷</a>
+            <a href="#" title="YouTube">📺</a>
+            <a href="#" title="GitHub">💻</a>
+        </div>
+        
+        <p>&copy; 2024 Shooting Star. Todos os direitos reservados.</p>
+    </footer>
+
+    <script>
+        // Global variables
+        let currentSection = 'home';
+        let filters = {
+            constellations: true,
+            planets: false
+        };
+        let zoomLevel = 1;
+        const minZoom = 0.5;
+        const maxZoom = 2;
+        let dragOffset = { x: 0, y: 0 };
+        let isDragging = false;
+        let dragStart = { x: 0, y: 0 };
+
+        // Initialize the app
+        document.addEventListener('DOMContentLoaded', function() {
+            createStarfield();
+            createShootingStars();
+            setupEventListeners();
+            setupScrollEffect();
+            setupSkyMapInteractions();
+        });
+
+        // Create animated starfield background
+        function createStarfield() {
+            const starfield = document.getElementById('starfield');
+            const starCount = 150;
+
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = `star ${['small', 'medium', 'large'][Math.floor(Math.random() * 3)]}`;
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starfield.appendChild(star);
+            }
+        }
+
+        // Create shooting stars
+        function createShootingStars() {
+            setInterval(() => {
+                if (Math.random() < 0.3) {
+                    const shootingStar = document.createElement('div');
+                    shootingStar.className = 'shooting-star';
+                    shootingStar.style.left = Math.random() * 100 + '%';
+                    shootingStar.style.top = Math.random() * 50 + '%';
+                    shootingStar.style.animation = 'shoot 4s linear forwards';
+                    
+                    document.getElementById('starfield').appendChild(shootingStar);
+                    
+                    setTimeout(() => {
+                        shootingStar.remove();
+                    }, 4000);
+                }
+            }, 3000);
+        }
+
+        // Setup scroll effect for header
+        function setupScrollEffect() {
+            window.addEventListener('scroll', () => {
+                const header = document.getElementById('header');
+                if (window.scrollY > 50) {
+                    header.classList.add('scrolled');
+                } else {
+                    header.classList.remove('scrolled');
+                }
+            });
+        }
+
+        // Setup event listeners for navigation
+        function setupEventListeners() {
+            const navLinks = document.querySelectorAll('.nav-link');
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const section = link.getAttribute('data-section');
+                    showSection(section);
+                    
+                    // Update active state
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                    
+                    // Close mobile menu if open
+                    document.getElementById('navMenu').classList.remove('mobile-open');
+                });
+            });
+        }
+
+        // Show specific section
+        function showSection(sectionName) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Show target section
+            document.getElementById(sectionName).classList.add('active');
+            currentSection = sectionName;
+            
+            // Update navigation
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active');
+                if (link.getAttribute('data-section') === sectionName) {
+                    link.classList.add('active');
+                }
+            });
+
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Toggle mobile menu
+        function toggleMobileMenu() {
+            const navMenu = document.getElementById('navMenu');
+            navMenu.classList.toggle('mobile-open');
+        }
+
+        // Setup sky map interactions
+        function setupSkyMapInteractions() {
+            const stars = document.querySelectorAll('.star-point');
+            const constellations = document.querySelectorAll('.constellation');
+            const tooltip = document.getElementById('tooltip');
+            const svg = document.getElementById('constellationSvg');
+            const container = document.getElementById('skyMap');
+
+            // Helper to get mouse position relative to SVG
+            function getSvgCoords(evt) {
+                let point = svg.createSVGPoint();
+                point.x = evt.clientX;
+                point.y = evt.clientY;
+                let ctm = svg.getScreenCTM();
+                if (ctm) {
+                    let rect = svg.getBoundingClientRect();
+                    return {
+                        x: evt.clientX - rect.left,
+                        y: evt.clientY - rect.top
+                    };
+                } else {
+                    return { x: evt.clientX, y: evt.clientY };
+                }
+            }
+
+            // Star hover effects
+            stars.forEach(star => {
+                star.addEventListener('mouseenter', (e) => {
+                    const name = star.getAttribute('data-name');
+                    const info = star.getAttribute('data-info') || 'Estrela brilhante no céu noturno';
+                    const coords = getSvgCoords(e);
+                    showTooltip(coords.x, coords.y, name, info, svg);
+                });
+
+                star.addEventListener('mouseleave', () => {
+                    hideTooltip();
+                });
+
+                star.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const name = star.getAttribute('data-name');
+                    showNotification(`Informações sobre ${name} carregadas!`);
+                });
+            });
+
+            // Constellation hover effects
+            constellations.forEach(constellation => {
+                constellation.addEventListener('mouseenter', (e) => {
+                    const name = constellation.getAttribute('data-name');
+                    const distance = constellation.getAttribute('data-distance');
+                    const info = constellation.getAttribute('data-info');
+                    const coords = getSvgCoords(e);
+                    showTooltip(coords.x, coords.y, name, `${info} - Distância: ${distance}`, svg);
+                });
+
+                constellation.addEventListener('mouseleave', () => {
+                    hideTooltip();
+                });
+            });
+
+            // Drag logic for SVG when zoomed
+            svg.addEventListener('mousedown', startDrag);
+            svg.addEventListener('touchstart', startDrag, { passive: false });
+            window.addEventListener('mousemove', onDrag);
+            window.addEventListener('touchmove', onDrag, { passive: false });
+            window.addEventListener('mouseup', endDrag);
+            window.addEventListener('touchend', endDrag);
+
+            function startDrag(e) {
+                if (zoomLevel <= 1) return;
+                isDragging = true;
+                dragStart = getPointerPosition(e);
+                // Só muda o cursor aqui, não durante o movimento
+                container.style.cursor = 'grabbing';
+                e.preventDefault && e.preventDefault();
+            }
+            function onDrag(e) {
+                if (!isDragging) return;
+                const pos = getPointerPosition(e);
+                const dx = pos.x - dragStart.x;
+                const dy = pos.y - dragStart.y;
+                dragOffset.x += dx;
+                dragOffset.y += dy;
+                applyZoom();
+                dragStart = pos;
+                // Removido: container.style.cursor = 'grabbing';
+                e.preventDefault && e.preventDefault();
+            }
+            function endDrag(e) {
+                if (!isDragging) return;
+                isDragging = false;
+                // Só muda o cursor aqui, não durante o movimento
+                container.style.cursor = 'grab';
+                e.preventDefault && e.preventDefault();
+            }
+            function getPointerPosition(e) {
+                if (e.touches && e.touches.length) {
+                    return { x: e.touches[0].clientX, y: e.touches[0].clientY };
+                } else {
+                    return { x: e.clientX, y: e.clientY };
+                }
+            }
+        }
+
+        // Show tooltip (SVG-aware)
+        function showTooltip(x, y, title, content, parentEl) {
+            const tooltip = document.getElementById('tooltip');
+            document.getElementById('tooltip-title').textContent = title;
+            document.getElementById('tooltip-content').textContent = content;
+            // Temporarily show tooltip offscreen to measure size
+            tooltip.style.display = 'block';
+            tooltip.style.left = '-9999px';
+            tooltip.style.top = '-9999px';
+            setTimeout(() => {
+                let left, top;
+                if (parentEl) {
+                    const rect = parentEl.getBoundingClientRect();
+                    left = rect.left + x - tooltip.offsetWidth / 2;
+                    top = rect.top + y - tooltip.offsetHeight - 16;
+                } else {
+                    left = x - tooltip.offsetWidth / 2;
+                    top = y - tooltip.offsetHeight - 16;
+                }
+                tooltip.style.left = left + 'px';
+                tooltip.style.top = top + 'px';
+            }, 0);
+        }
+
+        // Hide tooltip
+        function hideTooltip() {
+            document.getElementById('tooltip').style.display = 'none';
+        }
+
+        // Toggle filters in sky map
+        function toggleFilter(filterType) {
+            filters[filterType] = !filters[filterType];
+            
+            const element = document.getElementById(filterType);
+            const button = document.querySelector(`[onclick="toggleFilter('${filterType}')"]`);
+            
+            if (filters[filterType]) {
+                if (element) element.style.display = 'block';
+                button.classList.add('active');
+            } else {
+                if (element) element.style.display = 'none';
+                button.classList.remove('active');
+            }
+        }
+
+        // Reset sky map view
+        function resetView() {
+            // Reset all filters to default
+            filters.constellations = true;
+            filters.planets = false;
+            
+            // Update UI
+            document.getElementById('planets').style.display = 'none';
+            document.querySelectorAll('.control-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector('[onclick="toggleFilter(\'constellations\')"]').classList.add('active');
+            
+            dragOffset = { x: 0, y: 0 };
+            applyZoom();
+
+            showNotification('Visualização resetada!');
+        }
+
+        // Set alert for meteor showers
+        function setAlert(meteorName) {
+            showNotification(`Alerta configurado para ${meteorName}! Você será notificado quando o evento se aproximar.`);
+        }
+
+        // Open search (placeholder)
+        function openSearch() {
+            showNotification('Funcionalidade de busca em desenvolvimento!');
+        }
+
+        // Zoom functions
+        function zoomIn() {
+            zoomLevel = Math.min(maxZoom, zoomLevel + 0.1);
+            applyZoom();
+        }
+        function zoomOut() {
+            zoomLevel = Math.max(minZoom, zoomLevel - 0.1);
+            applyZoom();
+        }
+        function applyZoom() {
+            const svg = document.getElementById('constellationSvg');
+            svg.style.transform = `scale(${zoomLevel}) translate(${dragOffset.x/zoomLevel}px, ${dragOffset.y/zoomLevel}px)`;
+            svg.style.transformOrigin = 'center center';
+        }
+
+        // Show notification
+        function showNotification(message) {
+            // Remove existing notifications
+            document.querySelectorAll('.notification').forEach(notification => {
+                notification.remove();
+            });
+            
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Auto remove after 4 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideInRight 0.5s ease reverse';
+                setTimeout(() => notification.remove(), 500);
+            }, 4000);
+        }
+
+        // Add some interactive sparkle effects
+        document.addEventListener('mousemove', (e) => {
+            if (Math.random() < 0.02) {
+                createSparkle(e.clientX, e.clientY);
+            }
+        });
+
+        function createSparkle(x, y) {
+            const sparkle = document.createElement('div');
+            sparkle.style.position = 'fixed';
+            sparkle.style.left = x + 'px';
+            sparkle.style.top = y + 'px';
+            sparkle.style.width = '4px';
+            sparkle.style.height = '4px';
+            sparkle.style.background = '#61dafb';
+            sparkle.style.borderRadius = '50%';
+            sparkle.style.pointerEvents = 'none';
+            sparkle.style.zIndex = '9999';
+            sparkle.style.animation = 'twinkle 1s ease-out forwards';
+            
+            document.body.appendChild(sparkle);
+            
+            setTimeout(() => sparkle.remove(), 1000);
+        }
+    </script>
+</body>
+</html>
